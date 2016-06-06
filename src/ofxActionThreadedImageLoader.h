@@ -9,19 +9,23 @@ public:
     
     ofxActionThreadedImageLoader();
     
-    int imageSize;
-    int thumbSize;
-    
     vector<ofImage> items;
     vector<ofImage> thumbs;
-    
-    deque<ofImage> thumbs_to_update;
-    bool needClean = true;
-    
+
+    int imageSize;
+    int thumbSize;
+
     void clean();
+    
+    void setSize(int size, int thumbSize, bool crop);
     
 protected:
     
+    bool crop;
+
+    deque<ofImage> thumbs_to_update;
+    bool needClean = true;
+
     // Check the update queue and update the texture
     //--------------------------------------------------------------
     void update(ofEventArgs & a);

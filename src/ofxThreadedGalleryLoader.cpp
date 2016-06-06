@@ -5,12 +5,16 @@ void ofxThreadGalleryLoader::setup() {
     ofAddListener(loader->IMAGE_LOADED, this, &ofxThreadGalleryLoader::onPhotoLoaded);
 }
 
+void ofxThreadGalleryLoader::setSize(int size, int thumbSize, bool crop) {
+    loader->setSize(size, thumbSize, crop);
+}
+
 void ofxThreadGalleryLoader::onPhotoLoaded(string &message) {
-    ofLogVerbose("ofxThreadGalleryLoader", "[ThreadGalleryLoader:onPhotoLoaded] loaded " + message + " " + ofToString(loader->items.size()) +"/" + ofToString(countToLoad));
+    ofLogVerbose("ofxThreadGalleryLoader", "loaded " + message + " " + ofToString(loader->items.size()) +"/" + ofToString(countToLoad));
 }
 
 void ofxThreadGalleryLoader::load(string path) {
-    ofLogVerbose("[ThreadGalleryLoader:load]", path);
+    ofLogVerbose("ofxThreadGalleryLoader", "load:" + path);
     clean();
     
     // need to clean
@@ -29,11 +33,11 @@ void ofxThreadGalleryLoader::load(string path) {
 }
 
 void ofxThreadGalleryLoader::stopLoad() {
-    ofLogVerbose("[ThreadGalleryLoader]", "stopLoad");
+    ofLogVerbose("ofxThreadGalleryLoader", "stopLoad");
 }
 
 void ofxThreadGalleryLoader::clean() {
-    ofLogVerbose("[ThreadGalleryLoader]", "clean");
+    ofLogVerbose("ofxThreadGalleryLoader", "clean");
     countToLoad = 0;
     loader->clean();
 }

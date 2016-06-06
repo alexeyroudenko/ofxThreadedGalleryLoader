@@ -11,6 +11,8 @@ public:
 
     void setup();
     
+    void setSize(int size, int thumbSize, bool crop);
+    
     void onPhotoLoaded(string &message);
     
     void load(string path);

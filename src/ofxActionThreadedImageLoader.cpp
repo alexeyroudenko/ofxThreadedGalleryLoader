@@ -13,6 +13,13 @@ ofxActionThreadedImageLoader::ofxActionThreadedImageLoader()
     
     imageSize = IMAGE_SIZE;
     thumbSize = THUMB_SIZE;
+    crop = true;
+}
+
+void ofxActionThreadedImageLoader::setSize(int size_, int thumbSize_, bool crop_) {
+    imageSize = size_;
+    thumbSize = thumbSize_;
+    crop = crop_;
 }
 
 void ofxActionThreadedImageLoader::clean() {
@@ -93,9 +100,9 @@ void ofxActionThreadedImageLoader::threadedFunction() {
     
     while(isThreadRunning()) {
         lock();
-        ofLogVerbose("[ofxActionThreadedImageLoader] isThreadRunning start waitng images_to_load_buffer size " + ofToString(images_to_load_buffer.size()));
+        ofLogVerbose("ofxActionThreadedImageLoader", "isThreadRunning start waitng images_to_load_buffer size " + ofToString(images_to_load_buffer.size()));
         if(images_to_load_buffer.empty()) condition.wait(mutex);
-        ofLogVerbose("[ofxActionThreadedImageLoader] isThreadRunning end waiting images_to_load_buffer size " + ofToString(images_to_load_buffer.size()));
+        ofLogVerbose("ofxActionThreadedImageLoader", "isThreadRunning end waiting images_to_load_buffer size " + ofToString(images_to_load_buffer.size()));
         images_to_load.insert( images_to_load.end(),
                               images_to_load_buffer.begin(),
                               images_to_load_buffer.end() );
@@ -116,11 +123,14 @@ void ofxActionThreadedImageLoader::threadedFunction() {
             ofImageLoaderEntry  &entry = images_to_load.front();
             
             if(!entry.image->load(entry.filename)) {
-                ofLogError() << "[ofxActionThreadedImageLoader] error loading image " << entry.filename;
+                ofLogError("ofxActionThreadedImageLoader", "error loading image " + entry.filename);
             } else {
-                
-                entry.image->resize(entry.image->getWidth() * (1.0 * imageSize / entry.image->getHeight()), imageSize);
-                entry.image->crop((entry.image->getWidth() - imageSize) / 2, 0, imageSize, imageSize);
+                if (crop) {
+                    entry.image->resize(entry.image->getWidth() * (1.0 * imageSize / entry.image->getHeight()), imageSize);
+                    if (crop) entry.image->crop((entry.image->getWidth() - imageSize) / 2, 0, imageSize, imageSize);
+                } else {
+                    entry.image->resize(imageSize, entry.image->getHeight() * (1.0 * imageSize / entry.image->getWidth()));
+                }
                 
                 ofImage thumb;
                 thumb.clone(*entry.image);
