@@ -17,7 +17,7 @@ public:
     ~ofxCustomThreadedImageLoader();
 
 	void loadFromDisk(ofImage& image, string file, float scale = 1.0);
-	void loadFromURL(ofImage& image, string url);
+	void loadFromURL(ofImage& image, string fileURL);
     
     ofEvent<string>	IMAGE_LOADED;
 
@@ -50,7 +50,7 @@ protected:
         ofLoaderType type;
         float scale;
         string filename;
-        string url;
+        string fileURL;
         string name;
         int id;
     };

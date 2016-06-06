@@ -45,7 +45,7 @@ void ofxCustomThreadedImageLoader::loadFromDisk(ofImage& image, string filename,
 void ofxCustomThreadedImageLoader::loadFromURL(ofImage& image, string url) {
 	nextID++;
 	ofImageLoaderEntry entry(image, OF_LOAD_FROM_URL);
-	entry.url = url;
+	entry.fileURL = url;
 	entry.id = nextID;
 	entry.image->setUseTexture(false);	
 	entry.name = "image" + ofToString(entry.id);
@@ -95,7 +95,7 @@ void ofxCustomThreadedImageLoader::threadedFunction() {
                 images_async_loading.push_back(entry);
                 unlock();
                 
-                ofLoadURLAsync(entry.url, entry.name);
+                ofLoadURLAsync(entry.fileURL, entry.name);
             }
 
     		images_to_load.pop_front();
