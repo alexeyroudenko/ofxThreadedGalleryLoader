@@ -6,6 +6,7 @@
 class ofxThreadGalleryLoader {
     
 public:
+    vector<string> srcPaths;
     ofxActionThreadedImageLoader *loader;
     int countToLoad = 0;
 
@@ -16,6 +17,8 @@ public:
     void onPhotoLoaded(string &message);
     
     void load(string path);
+    
+    void add(string filePath);
     
     void stopLoad();
     

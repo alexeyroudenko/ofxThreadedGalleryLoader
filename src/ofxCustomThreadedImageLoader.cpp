@@ -33,6 +33,8 @@ void ofxCustomThreadedImageLoader::loadFromDisk(ofImage& image, string filename,
 	entry.name = filename;
     entry.scale = scale;
     
+    ofLogVerbose("ofxCustomThreadedImageLoader", "[loadFromDisk] id:" + ofToString(entry.id));
+    
     lock();
     images_to_load_buffer.push_back(entry);
     condition.signal();
@@ -81,7 +83,7 @@ void ofxCustomThreadedImageLoader::threadedFunction() {
                 if(! entry.image->load(entry.filename) )  {
                     ofLogError() << "ofxCustomThreadedImageLoader error loading image " << entry.filename;
                 } else {
-//                    ofLogVerbose() << "ofxCustomThreadedImageLoader loaded image " << entry.filename << " " << ofToString(entry.image->width);
+                    ofLogVerbose("ofxCustomThreadedImageLoader", "loaded image " + entry.filename + " width:" + ofToString(entry.image->getWidth()));
 //                    if (entry.scale != 1.0) {
 //                        entry.image->resize(entry.image->width * entry.scale, entry.image->height * entry.scale);
 //                    }
@@ -141,7 +143,7 @@ void ofxCustomThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 void ofxCustomThreadedImageLoader::update(ofEventArgs & a){
     
     // Load 1 image per update so we don't block the gl thread for too long
-    ofLogVerbose("ofxCustomThreadedImageLoader::update");
+    ofLogVerbose("ofxCustomThreadedImageLoader", "update");
     lock();
 	if (!images_to_update.empty()) {
 
@@ -159,6 +161,7 @@ void ofxCustomThreadedImageLoader::update(ofEventArgs & a){
 
 		images_to_update.pop_front();
         
+        ofLogVerbose("ofxCustomThreadedImageLoader", "send IMAGE_LOADED");
         ofNotifyEvent(IMAGE_LOADED, entry.filename, this);
 	}
     unlock();

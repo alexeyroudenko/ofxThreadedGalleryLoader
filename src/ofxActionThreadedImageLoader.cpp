@@ -99,10 +99,11 @@ void ofxActionThreadedImageLoader::threadedFunction() {
     deque<ofImageLoaderEntry> images_to_load;
     
     while(isThreadRunning()) {
+        
         lock();
-        ofLogVerbose("ofxActionThreadedImageLoader", "isThreadRunning start waitng images_to_load_buffer size " + ofToString(images_to_load_buffer.size()));
+        //ofLogVerbose("ofxActionThreadedImageLoader", "isThreadRunning start waitng images_to_load_buffer size " + ofToString(images_to_load_buffer.size()));
         if(images_to_load_buffer.empty()) condition.wait(mutex);
-        ofLogVerbose("ofxActionThreadedImageLoader", "isThreadRunning end waiting images_to_load_buffer size " + ofToString(images_to_load_buffer.size()));
+        //ofLogVerbose("ofxActionThreadedImageLoader", "isThreadRunning end waiting images_to_load_buffer size " + ofToString(images_to_load_buffer.size()));
         images_to_load.insert( images_to_load.end(),
                               images_to_load_buffer.begin(),
                               images_to_load_buffer.end() );
@@ -110,9 +111,9 @@ void ofxActionThreadedImageLoader::threadedFunction() {
         images_to_load_buffer.clear();
         unlock();
         
-        
         while(!images_to_load.empty()) {
             if (needClean == true) {
+                ofLogVerbose("ofxActionThreadedImageLoader", "needClean " + ofToString(images_to_load.size()));
                 needClean = false;
                 for (int i = 0; i < images_to_load.size(); i++)
                     images_to_load.at(i).image->clear();
@@ -131,6 +132,8 @@ void ofxActionThreadedImageLoader::threadedFunction() {
                 } else {
                     entry.image->resize(imageSize, entry.image->getHeight() * (1.0 * imageSize / entry.image->getWidth()));
                 }
+                
+                ofLogVerbose("ofxActionThreadedImageLoader", "loaded image " + ofToString(entry.id));
                 
                 ofImage thumb;
                 thumb.clone(*entry.image);
