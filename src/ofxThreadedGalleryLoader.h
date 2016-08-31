@@ -16,7 +16,7 @@ public:
     
     void onPhotoLoaded(string &message);
     
-    void load(string path);
+    int load(string path);
     
     void add(string filePath);
     

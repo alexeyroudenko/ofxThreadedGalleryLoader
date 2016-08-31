@@ -26,7 +26,7 @@ void ofxThreadGalleryLoader::add(string filePath) {
     loader->loadFromDisk(*image, filePath);
 }
 
-void ofxThreadGalleryLoader::load(string path) {
+int ofxThreadGalleryLoader::load(string path) {
     ofLogVerbose("ofxThreadGalleryLoader", "load:" + path);
     clean();
     
@@ -36,7 +36,10 @@ void ofxThreadGalleryLoader::load(string path) {
     
     
     ofDirectory dir;
+    dir.allowExt("jpg");
+    dir.allowExt("png");
     dir.listDir(path);
+    dir.sort();
     countToLoad = dir.size();
     for(int i = 0; i < (int)dir.size(); i++) {
         ofImage *image = new ofImage();
@@ -44,6 +47,7 @@ void ofxThreadGalleryLoader::load(string path) {
         srcPaths.push_back(fileName);
         loader->loadFromDisk(*image, fileName);
     }
+    return countToLoad;
 }
 
 void ofxThreadGalleryLoader::stopLoad() {

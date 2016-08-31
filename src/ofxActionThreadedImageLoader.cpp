@@ -127,8 +127,12 @@ void ofxActionThreadedImageLoader::threadedFunction() {
                 ofLogError("ofxActionThreadedImageLoader", "error loading image " + entry.filename);
             } else {
                 if (crop) {
-                    entry.image->resize(entry.image->getWidth() * (1.0 * imageSize / entry.image->getHeight()), imageSize);
-                    if (crop) entry.image->crop((entry.image->getWidth() - imageSize) / 2, 0, imageSize, imageSize);
+                    if (entry.image->getWidth() > entry.image->getHeight()) {
+                        entry.image->resize(entry.image->getWidth() * (1.0 * imageSize / entry.image->getHeight()), imageSize);
+                    } else {
+                        entry.image->resize(imageSize, entry.image->getHeight() * (1.0 * imageSize / entry.image->getWidth()));
+                    }
+                    entry.image->crop((entry.image->getWidth() - imageSize) / 2, 0, imageSize, imageSize);
                 } else {
                     entry.image->resize(imageSize, entry.image->getHeight() * (1.0 * imageSize / entry.image->getWidth()));
                 }
