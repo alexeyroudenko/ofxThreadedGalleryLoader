@@ -17,7 +17,7 @@ public:
     ~ofxCustomThreadedImageLoader();
 
 	void loadFromDisk(ofImage& image, string file, float scale = 1.0);
-	void loadFromURL(ofImage& image, string fileURL);
+	void loadFromURL(ofImage& image, string fileURL, float scale = 1.0);
     
     ofEvent<string>	IMAGE_LOADED;
 
@@ -29,8 +29,8 @@ protected:
 
     // Where to load form?
     enum ofLoaderType {
-        OF_LOAD_FROM_DISK
-        ,OF_LOAD_FROM_URL
+        OF_LOAD_FROM_DISK,
+        OF_LOAD_FROM_URL
     };
     
     // Entry to load.

@@ -24,6 +24,12 @@ void ofxThreadGalleryLoader::add(string filePath) {
     
     ofImage *image = new ofImage();
     loader->loadFromDisk(*image, filePath);
+    
+//    if (filePath.find("http") != 0) {
+//        loader->loadFromDisk(*image, filePath);
+//    } else {
+//        loader->loadFromURL(*image, filePath);
+//    }
 }
 
 int ofxThreadGalleryLoader::load(string path) {

@@ -44,13 +44,19 @@ void ofxCustomThreadedImageLoader::loadFromDisk(ofImage& image, string filename,
 
 // Load an url asynchronously from an url.
 //--------------------------------------------------------------
-void ofxCustomThreadedImageLoader::loadFromURL(ofImage& image, string url) {
+void ofxCustomThreadedImageLoader::loadFromURL(ofImage& image, string url, float scale) {
 	nextID++;
 	ofImageLoaderEntry entry(image, OF_LOAD_FROM_URL);
 	entry.fileURL = url;
 	entry.id = nextID;
 	entry.image->setUseTexture(false);	
-	entry.name = "image" + ofToString(entry.id);
+    //entry.name = "image" + ofToString(entry.id);
+    
+    entry.name = url;
+    entry.scale = scale;
+
+    
+    ofLogVerbose("ofxCustomThreadedImageLoader", "[loadFromURL] id:" + ofToString(entry.id));
 
     lock();
 	images_to_load_buffer.push_back(entry);
@@ -65,7 +71,7 @@ void ofxCustomThreadedImageLoader::threadedFunction() {
     
     deque<ofImageLoaderEntry> images_to_load;
 
-	while( isThreadRunning() ) {
+	while (isThreadRunning()) {
 		lock();
 		if(images_to_load_buffer.empty()) condition.wait(mutex);
 		images_to_load.insert( images_to_load.end(),
@@ -76,14 +82,18 @@ void ofxCustomThreadedImageLoader::threadedFunction() {
 		unlock();
         
         
-        while( !images_to_load.empty() ) {
-            ofImageLoaderEntry  & entry = images_to_load.front();
+        while(!images_to_load.empty() ) {
+            ofImageLoaderEntry  &entry = images_to_load.front();
+            
+            //ofLogVerbose("ofxCustomThreadedImageLoader", "threadedFunction");
             
             if(entry.type == OF_LOAD_FROM_DISK) {
+                //ofLogVerbose("ofxCustomThreadedImageLoader", "entry OF_LOAD_FROM_DISK");
+                
                 if(! entry.image->load(entry.filename) )  {
                     ofLogError() << "ofxCustomThreadedImageLoader error loading image " << entry.filename;
                 } else {
-                    ofLogVerbose("ofxCustomThreadedImageLoader", "loaded image " + entry.filename + " width:" + ofToString(entry.image->getWidth()));
+                    //ofLogVerbose("ofxCustomThreadedImageLoader", "loaded image " + entry.filename + " width:" + ofToString(entry.image->getWidth()));
 //                    if (entry.scale != 1.0) {
 //                        entry.image->resize(entry.image->width * entry.scale, entry.image->height * entry.scale);
 //                    }
@@ -93,11 +103,16 @@ void ofxCustomThreadedImageLoader::threadedFunction() {
                 images_to_update.push_back(entry);
                 unlock();
             } else if (entry.type == OF_LOAD_FROM_URL) {
+                ofLogVerbose("ofxCustomThreadedImageLoader", "entry OF_LOAD_FROM_URL");
+                
                 lock();
                 images_async_loading.push_back(entry);
                 unlock();
                 
+                ofLogVerbose("ofxCustomThreadedImageLoader", "threadedFunction " + entry.fileURL + " " + entry.name);
                 ofLoadURLAsync(entry.fileURL, entry.name);
+            } else {
+                ofLogVerbose("ofxCustomThreadedImageLoader", "no entry");
             }
 
     		images_to_load.pop_front();
@@ -111,6 +126,9 @@ void ofxCustomThreadedImageLoader::threadedFunction() {
 // update queue. The update queue is used to update the texture.
 //--------------------------------------------------------------
 void ofxCustomThreadedImageLoader::urlResponse(ofHttpResponse & response) {
+    
+    //ofLogVerbose("ofxCustomThreadedImageLoader", "urlResponse " + response.error);
+    
 	if(response.status == 200) {
 		lock();
 		

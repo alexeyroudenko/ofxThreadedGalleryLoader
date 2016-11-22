@@ -113,7 +113,7 @@ void ofxActionThreadedImageLoader::threadedFunction() {
         
         while(!images_to_load.empty()) {
             if (needClean == true) {
-                ofLogVerbose("ofxActionThreadedImageLoader", "needClean " + ofToString(images_to_load.size()));
+                //ofLogVerbose("ofxActionThreadedImageLoader", "needClean " + ofToString(images_to_load.size()));
                 needClean = false;
                 for (int i = 0; i < images_to_load.size(); i++)
                     images_to_load.at(i).image->clear();
@@ -137,7 +137,7 @@ void ofxActionThreadedImageLoader::threadedFunction() {
                     entry.image->resize(imageSize, entry.image->getHeight() * (1.0 * imageSize / entry.image->getWidth()));
                 }
                 
-                ofLogVerbose("ofxActionThreadedImageLoader", "loaded image " + ofToString(entry.id));
+                //ofLogVerbose("ofxActionThreadedImageLoader", "loaded image " + ofToString(entry.id));
                 
                 ofImage thumb;
                 thumb.clone(*entry.image);
